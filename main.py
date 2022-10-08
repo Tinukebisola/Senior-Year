@@ -13,4 +13,9 @@ json_body = json.loads(body)
 
 r = requests.post(url=url, json=json_body, headers=headers)
 json_data = r.json()
-pprint(json_data)
+# pprint(json_data)
+for entry in json_data["data"]["home_search"]["properties"]:
+    pprint(entry)
+    pprint(entry['description'])
+    print(entry['description']['baths'])
+
