@@ -1,3 +1,4 @@
+from tabulate import tabulate
 import json
 import requests
 from pprint import pprint
@@ -55,3 +56,6 @@ for entry in json_data["data"]["home_search"]["properties"]:
         pass
 
 print(all_properties)
+df = pd.DataFrame(all_properties)
+df.to_csv('Florida.csv', index=False)
+print(tabulate(df, headers=df.columns))
