@@ -2,16 +2,23 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import User
+from .models import User, Apartment
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 
 
 def landing(request):
-    return render(request, 'index.html')
+    apartments = Apartment.objects.all()
+    context = {
+        'user': request.user if request.user.is_authenticated else None
+    }
+    return render(request, 'index.html', context)
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password1 = request.POST.get('password1')
@@ -30,13 +37,16 @@ def register(request):
 
 
 def loginview(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
+
     if request.method == 'POST':
         email = request.POST.get('email')
-        password1 = request.POST.get('password')
-        user = authenticate(request, email=email, password=password1)
+        password = request.POST.get('password')
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('landing')
+            return redirect('profile')
         else:
             existing_user = User.objects.filter(email=email).count()
             if existing_user:
@@ -45,3 +55,14 @@ def loginview(request):
                 messages.error(request, f"User doesn't exist")
             return redirect('register')
     return render(request, 'login.html')
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    context = {
+        'user': request.user if request.user.is_authenticated else None
+    }
+
+    return render(request, 'profile.html', context)

@@ -57,6 +57,11 @@
                                                 <!--<p class="text-center small text-muted">Enter your email & password to
                                                     login</p>-->
                                             </div>
+                                            {% for message in messages %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
                                             <form class="row g-3 needs-validation" novalidate action="{% url 'login' %}"
                                                   method="POST">
                                                 {% csrf_token %}
@@ -106,6 +111,11 @@
                                                 <h5 class="card-title text-center pb-0 fs-4 text-dark">Create a new
                                                     Account</h5>
                                             </div>
+                                            {% for message in messages %}
+                                                <div class="alert alert-danger" role="alert">
+                                                    {{ message }}
+                                                </div>
+                                            {% endfor %}
                                             <form class="row g-3 needs-validation" novalidate
                                                   action="{% url 'register' %}"
                                                   method="POST">

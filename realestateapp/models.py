@@ -7,6 +7,9 @@ class CustomUserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **kwargs):
 
+        if password is None:
+            raise TypeError('Password should not be none')
+
         if not email:
             raise ValueError('User must have an email address')
 
@@ -39,7 +42,22 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    class LivingTypes(models.TextChoices):
+        pass
+
+    class IdentityTypes(models.TextChoices):
+        HE = 'HE', 'He'
+        SHE = 'SHE', 'She'
+        THEY = 'THEY', 'They'
+
     email = models.EmailField(_('email address'), unique=True)
+
+    # living_style = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
+    # necessity = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
+    # repairs_and_maintenance = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
+    # essentials = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
+    # decorate = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
+    # identity = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
 
     # required fields
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -56,6 +74,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+# What is your preferred living style
+# What must be something you have to have in your living space
+# How do you want repairs and maintenance to be handled
+# What essentials do you look for in a home
+# What do you identify as e.g he/she/they
+
+# How do you like to decorate your living space
 
 
 class Apartment(models.Model):

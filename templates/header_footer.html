@@ -32,10 +32,7 @@
     <style>
         /* The alert message box */
         .alert {
-            padding: 20px;
-            /* background-color: #f44336;  Red */
             color: white;
-        {#height: 20px;#} margin-bottom: 15px;
         }
 
         /* The close button */
@@ -67,13 +64,19 @@
 
         <!--<h1 class="logo"><a href="index.html">OnePage</a></h1> -->
         <!-- Uncomment below if you prefer to use an image logo -->
-        <a href="index.html" class="logo"><img src="{% static 'assets/img/logo.png' %}" alt="" class="img-fluid"></a>
+        <a href="{% url 'landing' %}" class="logo"><img src="{% static 'assets/img/logo.png' %}" alt=""
+                                                        class="img-fluid"></a>
 
         <nav id="navbar" class="navbar justify-content-center">
             <ul>
                 <li><a class="nav-item nav-link scrollto" href="search.html">Buy</a></li>
                 <li><a class=" nav-item nav-link scrollto" href="search.html">Rent</a></li>
-                <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
+                {% if user is not None %}
+                    <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
+                {% else %}
+                    <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
+                    <li><a class="getstarted scrollto rounded-pill" href="{% url 'login' %}">Sign Up</a></li>
+                {% endif %}
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
         </nav><!-- .navbar -->
