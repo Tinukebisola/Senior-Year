@@ -106,7 +106,7 @@ else:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'RealEstate',
             'USER': 'postgres',
-            'PASSWORD': 'Oreoluwa',
+            'PASSWORD': os.getenv('PASSWORD'),
             'HOST': '127.0.0.1',
             'PORT': '5432',
         }
