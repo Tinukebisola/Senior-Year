@@ -5,12 +5,19 @@ from django.contrib.auth import authenticate, login
 from .models import User, Apartment
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
+import random
 
 
 def landing(request):
-    apartments = Apartment.objects.all()
+    apartments = Apartment.objects.all().only('pictures', 'pictures1',
+                                              'min_price', 'max_price',
+                                              'min_beds', 'max_beds',
+                                              'min_baths', 'max_baths',
+                                              'address')
+    apartments = [random.choice(apartments) for i in range(16)]
     context = {
-        'user': request.user if request.user.is_authenticated else None
+        'user': request.user if request.user.is_authenticated else None,
+        'apartments': apartments
     }
     return render(request, 'index.html', context)
 
