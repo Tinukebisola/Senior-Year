@@ -73,6 +73,7 @@
                 <li><a class=" nav-item nav-link scrollto" href="search.html">Rent</a></li>
                 {% if user is not None %}
                     <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
+                    <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'login' %}">Sign Up</a></li>
