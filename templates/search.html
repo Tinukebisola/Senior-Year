@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Search Page</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top">
+    <div class="container d-flex align-items-center justify-content-between">
+
+        <a href="{% url 'landing' %}" class="logo"><img src="{% static 'assets/img/logo.png' %}" alt=""
+                                                        class="img-fluid"></a>
+
+        <nav id="navbar" class="navbar">
+            <ul>
+                <!--<li><a class="nav-link scrollto" href="search.html">Buy</a></li>-->
+                <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
+                {% if user is not None %}
+                    <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
+                    <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
+                {% else %}
+                    <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
+                    <li><a class="getstarted scrollto rounded-pill" href="{% url 'register' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav><!-- .navbar -->
+
+    </div>
+</header><!-- End Header -->
+
+
+<main id="main">
+
+    <!-- ======= Properties Section ======= -->
+    <section id="team" class="team">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Rent A Property</h2>
+            </div>
+            <div class="row">
+                <div class="card p-3 shadow border-opacity-10 rounded-4 mb-4">
+                    <div>
+                        <form class="hstack" action="{% url 'search' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-floating">
+                                <select class="form-select border-0 w-auto m-2 fw-semibold"
+                                        aria-label="Default select example" name="location">
+                                    <option value="TX">Texas</option>
+                                    <option value="NY">Manhattan</option>
+                                    <option value="CO">Colorado</option>
+                                    <option value="OH">Ohio</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="NY">New-York</option>
+                                </select>
+                                <label for="location" class="text-dark">Location</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <select class="form-select border-0 w-auto mx-2 fw-semibold" id="bath" name="baths">
+
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                    <option value="4">Four</option>
+                                </select>
+                                <label for="bath" class="text-black">Baths</label>
+                            </div>
+                            <div class="form-floating">
+                                <select class="form-select border-0 w-auto mx-2 fw-semibold" id="rooms" name="rooms">
+
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                    <option value="4">Four</option>
+                                </select>
+                                <label for="rooms" class="text-black">Rooms</label>
+                            </div>
+                            <div class="form-floating">
+                                <select class="form-select border-0 w-auto mx-2 fw-semibold" id="dogs" name="dogs">
+
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                                <label for="dogs" class="text-black">Dogs</label>
+                            </div>
+                            <div class="form-floating">
+                                <select class="form-select border-0 w-auto mx-2 fw-semibold" id="cats" name="cats">
+
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                                <label for="rooms" class="text-black">cats</label>
+                            </div>
+                            <div class="vr text-dark"></div>
+                            <div class="form-floating mx-4">
+                                <input type="number" class="form-control border-bottom noscroll" id="budget"
+                                       placeholder="Budget" name="budget">
+                                <label for="budget" class="fw-semibold text-black">Budget</label>
+                            </div>
+                            <button class="btn btn-dark my-2 ms-auto" type="submit"><i
+                                    class="ri-search-2-line me-2"></i>
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pt-3">
+                {% for apartment in apartments %}
+                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+                        <div class="member">
+                            <div class="member-img">
+                                <img src="{{ apartment.pictures }}" height="360px"
+                                     class="rounded" style="max-width: 100%;" alt="">
+                                <div class="social">
+                                    <a href=""><span class="">Price</span></a>
+                                </div>
+                            </div>
+                            <div class="member-info pt-2">
+                                {% if apartment.price is not None %}
+                                    <h4>${{ apartment.price }}</h4>
+                                {% else %}
+                                    <h4>${{ apartment.min_price }} - {{ apartment.max_price }}</h4>
+                                {% endif %}
+                                {% if apartment.beds is not None %}
+                                    <span class="d-inline-flex m-auto">{{ apartment.beds }} beds</span>
+                                {% else %}
+                                    <span class="d-inline-flex m-auto">{{ apartment.min_beds }} - {{ apartment.max_beds }} beds</span>
+                                {% endif %}
+                                {% if apartment.baths is not None %}
+                                    <span class="d-inline-flex justify-content-end">{{ apartment.baths }} baths</span>
+                                {% else %}
+                                    <span class="d-inline-flex justify-content-end">{{ apartment.min_baths }} - {{ apartment.max_baths }} baths</span>
+                                {% endif %}
+                                <span>{{ apartment.address }}, {{ apartment.state }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </section><!-- End Properties Section -->
+
+
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer">
+
+    <!-- Solid divider -->
+    <hr class="solid mx-lg-5">
+
+    <div class="container d-md-flex py-4">
+
+        <div class="me-md-auto text-center text-md-start">
+            <div class="copyright">
+                &copy; Copyright <strong><span>Tinuke</span></strong>. All Rights Reserved
+            </div>
+        </div>
+        <div class="social-links text-center text-md-right pt-3 pt-md-0">
+            <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+            <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+            <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+            <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+        </div>
+    </div>
+</footer><!-- End Footer -->
+
+<div id="preloader"></div>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+<script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+<script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+
+<!-- Template Main JS File -->
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+
+</body>
+
+</html>

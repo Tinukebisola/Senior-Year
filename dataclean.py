@@ -21,36 +21,37 @@ def create_records(row):
     apart = Apartment.objects.create(
         min_price=float(row['min_price']),
         max_price=float(row['max_price']),
-        cats=bool(row['cats']),
-        dogs=bool(row['dogs']),
-        pet_policy_text=row['pet_policy_text'],
+        cats=row['cats'] if row['cats'] is bool else None,
+        dogs=row['dogs'] if row['dogs'] is bool else None,
+        # pet_policy_text=row['pet_policy_text'],
         min_beds=float(row['min_beds']),
         max_beds=float(row['max_beds']),
         min_baths=float(row['min_baths']),
         max_baths=float(row['max_baths']),
         house_type=row['house_type'],
-        year_built=int(row['year_built']),
+        # year_built=int(row['year_built']),
         address=row['address'],
         postal_code=int(row['postal_code']),
         state=row['state'],
         city=row['city'],
-        county=row['county'],
+        # county=row['county'],
         pictures=row['pictures'],
         pictures1=row['pictures1'],
+        permalink=row['permalink'],
     )
     return apart
 
 
-df = pd.read_csv('Total.csv')
+df = pd.read_csv('Total_new.csv')
 print(len(df))
-df.dropna(axis=0, subset=['year_built'], inplace=True)
+# df.dropna(axis=0, subset=['beds', 'price', 'baths'], inplace=True)
 # df.drop(['beds', 'price', 'baths', 'sqft'], inplace=True, axis=1)
 print(len(df))
-print(tabulate(df.head(5), headers=df.columns))
+# print(tabulate(df.head(5), headers=df.columns))
 df['db'] = df.apply(lambda row: create_records(row), axis=1)
 # df['pictures'] = df['pictures'].apply(lambda x: x.replace('s.jpg', 'od-w480_h360_x2.webp'))
 # df['pictures1'] = df['pictures1'].apply(lambda x: x.replace('s.jpg', 'od-w480_h360_x2.webp'))
 print(tabulate(df.head(5), headers=df.columns))
-df.to_csv('Total.csv', index=False)
+# df.to_csv('Total.csv', index=False)
 
 # print(Apartment.objects.all())

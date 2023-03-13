@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'Realestate.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 if os.getcwd() == '/app':
     DATABASES = {'default': dj_database_url.config(default=os.environ['DATABASE_URL'], engine='django_cockroachdb')}
