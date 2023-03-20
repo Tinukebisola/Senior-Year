@@ -24,4 +24,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('logout/', views.logout_view, name='logout'),
     path('search/', views.search, name='search'),
+    path('apartments/<str:permalink>/', views.property, name='property'),
 ]

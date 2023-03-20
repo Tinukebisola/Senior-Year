@@ -19,12 +19,13 @@ def landing(request):
         rooms = request.POST.get('rooms')
         dogs = request.POST.get('dogs')
         cats = request.POST.get('cats')
-        apartments = Apartment.objects.filter().only('pictures', 'pictures1',
-                                                     'min_price', 'max_price',
-                                                     'min_beds', 'max_beds',
-                                                     'min_baths', 'max_baths',
-                                                     'address', 'baths', 'price',
-                                                     'beds', 'state', 'dogs', 'cats')
+        apartments = Apartment.objects.exclude(min_price__isnull=True,
+                                               max_price__isnull=True, ).only('pictures', 'pictures1',
+                                                                              'min_price', 'max_price',
+                                                                              'min_beds', 'max_beds',
+                                                                              'min_baths', 'max_baths',
+                                                                              'address', 'baths', 'price',
+                                                                              'beds', 'state', 'dogs', 'cats')
         if baths:
             apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(max_baths=baths)))
         if location:
@@ -34,20 +35,21 @@ def landing(request):
                 ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(max_price=budget)))
         if rooms:
             apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(max_beds=rooms)))
-        if cats:
-            apartments = apartments.filter(cats=cats)
-            print(apartments)
-        if dogs:
-            apartments = apartments.filter(dogs=dogs)
-            print(apartments)
+        # if cats:
+        #     apartments = apartments.filter(cats=cats)
+        #     print(apartments)
+        # if dogs:
+        #     apartments = apartments.filter(dogs=dogs)
+        #     print(apartments)
         apartments = apartments[:16]
     else:
-        apartments = Apartment.objects.all().only('pictures', 'pictures1',
-                                                  'min_price', 'max_price',
-                                                  'min_beds', 'max_beds',
-                                                  'min_baths', 'max_baths',
-                                                  'address', 'baths', 'price',
-                                                  'beds', 'state', 'dogs', 'cats')
+        apartments = Apartment.objects.exclude(min_price__isnull=True,
+                                               max_price__isnull=True, ).only('pictures', 'pictures1',
+                                                                              'min_price', 'max_price',
+                                                                              'min_beds', 'max_beds',
+                                                                              'min_baths', 'max_baths',
+                                                                              'address', 'baths', 'price',
+                                                                              'beds', 'state', 'dogs', 'cats')
         # print(apartments.values()[:16])
         # apartments = apartments[:16]
         apartments = [random.choice(apartments) for i in range(16)]
@@ -55,6 +57,7 @@ def landing(request):
         'user': request.user if request.user.is_authenticated else None,
         'apartments': apartments
     }
+    pprint(context)
 
     return render(request, 'index.html', context)
 
@@ -73,7 +76,7 @@ def register(request):
             user = authenticate(request, email=email, password=password1)
             if user is not None:
                 login(request, user)
-                return redirect('landing')
+                return redirect('profile')
         else:
             messages.error(request, f"Passwords do not match")
             return redirect('register')
@@ -82,7 +85,7 @@ def register(request):
 
 def loginview(request):
     if request.user.is_authenticated:
-        return redirect('profile')
+        return redirect('landing')
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -90,7 +93,7 @@ def loginview(request):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('profile')
+            return redirect('landing')
         else:
             existing_user = User.objects.filter(email=email).count()
             if existing_user:
@@ -136,12 +139,12 @@ def search(request):
                 ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(max_price=budget)))
         if rooms:
             apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(max_beds=rooms)))
-        if cats:
-            apartments = apartments.filter(cats=cats)
-            print(apartments)
-        if dogs:
-            apartments = apartments.filter(dogs=dogs)
-            print(apartments)
+        # if cats:
+        #     apartments = apartments.filter(cats=cats)
+        #     print(apartments)
+        # if dogs:
+        #     apartments = apartments.filter(dogs=dogs)
+        #     print(apartments)
         apartments = apartments[:16]
     else:
         apartments = Apartment.objects.all().only('pictures', 'pictures1',
@@ -164,3 +167,10 @@ def search(request):
 def logout_view(request):
     logout(request)
     return redirect('landing')
+
+
+def property(request, permalink):
+    print(permalink)
+    apartment = Apartment.objects.filter(permalink=permalink).first()
+    context = {}
+    return render(request, 'property.html', context)
