@@ -186,7 +186,8 @@
                                 <img src="{{ apartment.pictures }}" height="360px"
                                      class="rounded" style="max-width: 100%;" alt="">
                                 <div class="social">
-                                    <a href=""><span class="">Price</span></a>
+                                    <a href="{% url 'property' permalink=apartment.permalink %}"><span
+                                            class="">view</span></a>
                                 </div>
                             </div>
                             <div class="member-info pt-2">

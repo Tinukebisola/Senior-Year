@@ -9,6 +9,22 @@ import random
 from django.db.models import Q
 from django.contrib.auth import logout
 from pprint import pprint
+from .property_scaper import main
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+import json
+import asyncio
+from asgiref.sync import async_to_sync
 
 
 def landing(request):
@@ -104,7 +120,7 @@ def loginview(request):
     return render(request, 'login.html')
 
 
-@login_required
+# @login_required
 def profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -169,8 +185,55 @@ def logout_view(request):
     return redirect('landing')
 
 
+def get_page_content(url, timeout):
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options=options)
+    driver.get(url)
+    try:
+        element_present = EC.presence_of_element_located((By.TAG_NAME, 'body'))
+        WebDriverWait(driver, timeout).until(element_present)
+    except TimeoutException:
+        print(f'Timeout reached after {timeout} seconds.')
+    content = driver.page_source
+    driver.quit()
+    return content
+
+
 def property(request, permalink):
-    print(permalink)
+    # print(permalink)
     apartment = Apartment.objects.filter(permalink=permalink).first()
+    url = f'https://www.realtor.com/realestateandhomes-detail/{permalink}'
+    # print(get_page_content(url, 5000))
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    driver.get(url)
+    try:
+        element_present = EC.presence_of_element_located((By.TAG_NAME, 'body'))
+        WebDriverWait(driver, 5000).until(element_present)
+    except TimeoutException:
+        print(f'Timeout reached after 5000 seconds.')
+    content = driver.page_source
+    soup = BeautifulSoup(content, 'html.parser')
+    storage = {}
+    scripts = soup.find_all('script')
+    for script_tag in scripts:
+        if 'id' in script_tag.attrs and script_tag.attrs['id'] == '__NEXT_DATA__':
+            page = json.loads(script_tag.text)
+            for feature in page['props']['pageProps']['property']['details']:
+                # storage[feature['category']] = feature['text']
+                num = len(feature['text']) // 2
+                storage[feature['category']] = []
+                storage[feature['category']].append(feature['text'][:num + 1])
+                storage[feature['category']].append(feature['text'][num + 1:])
+            pprint(storage)
+            # print(content)
+            break
+    driver.quit()
     context = {}
+    context['apartment'] = apartment
+    context['storage'] = storage
+    print(context)
+    # context.update(storage)
     return render(request, 'property.html', context)
