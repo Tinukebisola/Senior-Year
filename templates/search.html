@@ -45,9 +45,14 @@
             <ul>
                 <!--<li><a class="nav-link scrollto" href="search.html">Buy</a></li>-->
                 <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
-                {% if user is not None %}
+                {% if request.user.is_authenticated %}
                     <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
+                    <li><a href=""><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                                        alt="avatar"
+                                        class="rounded-circle img-fluid"
+                                        style="max-height:30px; width:auto; vertical-align:middle;">
+                    </a></li>
                 {% else %}
                     <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'register' %}">Sign Up</a></li>
@@ -145,7 +150,8 @@
                                 <img src="{{ apartment.pictures }}" height="360px"
                                      class="rounded" style="max-width: 100%;" alt="">
                                 <div class="social">
-                                    <a href=""><span class="">Price</span></a>
+                                    <a href="{% url 'property' permalink=apartment.permalink %}"><span
+                                            class="">view</span></a>
                                 </div>
                             </div>
                             <div class="member-info pt-2">

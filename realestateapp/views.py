@@ -9,12 +9,6 @@ import random
 from django.db.models import Q
 from django.contrib.auth import logout
 from pprint import pprint
-from .property_scaper import main
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -23,8 +17,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import json
-import asyncio
-from asgiref.sync import async_to_sync
+import os
 
 
 def landing(request):
@@ -100,6 +93,7 @@ def register(request):
 
 
 def loginview(request):
+    print(request.user.is_authenticated)
     if request.user.is_authenticated:
         return redirect('landing')
 
@@ -116,7 +110,7 @@ def loginview(request):
                 messages.error(request, f"Password Incorrect")
             else:
                 messages.error(request, f"User doesn't exist")
-            return redirect('register')
+                return redirect('register')
     return render(request, 'login.html')
 
 
@@ -205,9 +199,18 @@ def property(request, permalink):
     apartment = Apartment.objects.filter(permalink=permalink).first()
     url = f'https://www.realtor.com/realestateandhomes-detail/{permalink}'
     # print(get_page_content(url, 5000))
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
+    # options = webdriver.ChromeOptions()
+    # options.add_argument('--headless')
+    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),
+                              chrome_options=chrome_options)
+
     driver.get(url)
     try:
         element_present = EC.presence_of_element_located((By.TAG_NAME, 'body'))
