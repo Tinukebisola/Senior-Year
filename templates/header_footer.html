@@ -69,10 +69,10 @@
 
         <nav id="navbar" class="navbar justify-content-center">
             <ul>
-                <li><a class="nav-item nav-link scrollto" href="search.html">Buy</a></li>
-                <li><a class=" nav-item nav-link scrollto" href="search.html">Rent</a></li>
+                <!--<li><a class="nav-item nav-link scrollto" href="search.html">Buy</a></li>-->
+                <li><a class=" nav-item nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a class=" nav-item nav-link scrollto" href="profile.html">Profile</a></li>
+                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href=""><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
                                         alt="avatar"

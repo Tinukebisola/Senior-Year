@@ -11,7 +11,7 @@ class RealtorScraper:
         self.all = []
         self.df = None
 
-    def send_request(self, state_code: str, asPath: str) -> dict:
+    def send_request(self, state_code: str, asPath: str, limit, offset) -> dict:
         url = "https://www.realtor.com/api/v1/rdc_search_srp?client_id=rdc-search-rentals&schema=vesta"
         headers = {"content-type": "application/json"}
         body = r'{"query":"\nquery ConsumerSearchQuery($query: HomeSearchCriteria!, $limit: Int, $offset: Int, $sort: [SearchAPISort], $bucket: SearchAPIBucket) {\n  home_search(query: $query, sort: $sort, limit: $limit, offset: $offset, bucket: $bucket) {\n    costar_counts {\n      costar_total\n      non_costar_total\n    }\n    total\n    count\n    properties: results {\n      property_id\n      listing_id\n      list_price\n      list_price_max\n      list_price_min\n      permalink\n      price_reduced_amount\n      matterport\n      has_specials\n      virtual_tours {\n        href\n      }\n      status\n      list_date\n      lead_attributes {\n        lead_type\n      }\n      pet_policy {\n        cats\n        dogs\n        dogs_small\n        dogs_large\n      }\n      other_listings {\n        rdc{\n          listing_id,\n          status\n        }\n      }\n      flags {\n        is_pending\n      }\n      photos(limit: 2, https: true) {\n        href\n      }\n      primary_photo(https: true) {\n          href\n      }\n      advertisers {\n        office {\n          name\n          phones {\n            number\n            type\n            primary\n            trackable\n            ext\n          }\n        }\n        phones {\n          number\n          type\n          primary\n          trackable\n          ext\n        }\n      }\n      flags {\n        is_new_listing\n      }\n      location {\n        address {\n          line\n          city\n          coordinate {\n            lat\n            lon\n          }\n          country\n          state_code\n          postal_code\n        }\n        county {\n          name\n          fips_code\n        }\n      }\n      description {\n        beds\n        beds_max\n        beds_min\n        baths\n        baths_min\n        baths_max\n        baths_full\n        baths_full_calc\n        baths_half\n        baths_3qtr\n        baths_1qtr\n        garage\n        garage_min\n        garage_max\n        sqft\n        sqft_max\n        sqft_min\n        name\n        sub_type\n        type\n        year_built\n      }\n      units {\n        availability {\n          date\n        }\n        description {\n          baths\n          beds\n          sqft\n        }\n        list_price\n      }\n      branding {\n        type\n        photo\n        name\n      }\n      source {\n        id\n        community_id\n        type\n        feed_type\n      }\n      products {\n        products\n      }\n    }\n  }\n}\n",' \
@@ -21,6 +21,8 @@ class RealtorScraper:
 
         # json_body["variables"]["page_index"] = page_number
         json_body["seoPayload"]['asPath'] = asPath
+        json_body["variables"]['limit'] = limit
+        json_body["variables"]['offset'] = offset
         json_body["variables"]["query"]["state_code"] = state_code
         # pprint(json_body)
 
@@ -77,26 +79,34 @@ class RealtorScraper:
         return feature_dict
 
     def parse_json_data(self) -> list:
+        limit = 42
+        offset = 0
 
         feature_dict_list = []
 
         for state_code, asPath in self.locations:
             print(state_code, asPath, len(self.all))
-            json_data = self.send_request(state_code, asPath)
-            # print(json_data["data"]["home_search"]["properties"])
-            try:
-                for entry in json_data["data"]["home_search"]["properties"]:
-                    feature_dict = self.extract_features(entry)
-                    # if len(feature_dict_list) > 100:
-                    #     break
-                    if feature_dict['price'] or feature_dict['min_price'] or feature_dict['max_price']:
+            for x in range(9):
+                if not x:
+                    offset += limit
+                    asPath += f'/pg-{x + 1}'
+                else:
+                    offset = 0
+                json_data = self.send_request(state_code, asPath, limit, offset)
+                # print(json_data["data"]["home_search"]["properties"])
+                try:
+                    for entry in json_data["data"]["home_search"]["properties"]:
+                        feature_dict = self.extract_features(entry)
+                        # if len(feature_dict_list) > 100:
+                        #     break
+                        # if feature_dict['price'] or feature_dict['min_price'] or feature_dict['max_price']:
                         # feature_dict_list.append(feature_dict)
                         self.all.append(feature_dict)
-                    else:
-                        continue
-            except Exception as e:
-                print(e)
-                pass
+                        # else:
+                        #     continue
+                except Exception as e:
+                    # print(e)
+                    pass
 
         return self.all
 
@@ -119,7 +129,8 @@ class RealtorScraper:
 if __name__ == "__main__":
     asPath = lambda x: f"/apartments/{x}"
     all_cities = [('TX', asPath('Texas')), ('NY', asPath('Manhattan')), ('NY', asPath('New-York')),
-                  ('CO', asPath('Colorado')), ('OH', asPath('Ohio')), ('FL', asPath('Florida'))]
+                  ('CO', asPath('Colorado')), ('OH', asPath('Ohio')), ('WY', asPath('Wyoming')),
+                  ('FL', asPath('Florida'))]
     # all_cities = [('FL', asPath('Florida'))]
     r = RealtorScraper(all_cities)
     r.create_dataframe()

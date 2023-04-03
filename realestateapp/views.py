@@ -21,52 +21,62 @@ import os
 
 
 def landing(request):
+    apartments = Apartment.objects.all().only('pictures', 'pictures1',
+                                              'min_price', 'max_price',
+                                              'min_beds', 'max_beds',
+                                              'min_baths', 'max_baths',
+                                              'address', 'baths', 'price',
+                                              'beds', 'state', 'dogs', 'cats')
     if request.method == 'POST':
+        print(request.POST)
         baths = request.POST.get('baths')
         location = request.POST.get('location')
         budget = request.POST.get('budget')
         rooms = request.POST.get('rooms')
         dogs = request.POST.get('dogs')
         cats = request.POST.get('cats')
-        apartments = Apartment.objects.exclude(min_price__isnull=True,
-                                               max_price__isnull=True, ).only('pictures', 'pictures1',
-                                                                              'min_price', 'max_price',
-                                                                              'min_beds', 'max_beds',
-                                                                              'min_baths', 'max_baths',
-                                                                              'address', 'baths', 'price',
-                                                                              'beds', 'state', 'dogs', 'cats')
+
         if baths:
-            apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(max_baths=baths)))
-        if location:
+            apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(baths=baths)))
+        if location != 'State':
             apartments = apartments.filter(state=location)
         if budget:
             apartments = apartments.filter(
-                ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(max_price=budget)))
+                ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(price=budget)))
         if rooms:
-            apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(max_beds=rooms)))
+            apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(beds=rooms)))
         # if cats:
         #     apartments = apartments.filter(cats=cats)
         #     print(apartments)
         # if dogs:
         #     apartments = apartments.filter(dogs=dogs)
         #     print(apartments)
-        apartments = apartments[:16]
-    else:
-        apartments = Apartment.objects.exclude(min_price__isnull=True,
-                                               max_price__isnull=True, ).only('pictures', 'pictures1',
-                                                                              'min_price', 'max_price',
-                                                                              'min_beds', 'max_beds',
-                                                                              'min_baths', 'max_baths',
-                                                                              'address', 'baths', 'price',
-                                                                              'beds', 'state', 'dogs', 'cats')
-        # print(apartments.values()[:16])
         # apartments = apartments[:16]
-        apartments = [random.choice(apartments) for i in range(16)]
+    # else:
+    #     apartments = Apartment.objects.exclude(min_price__isnull=True,
+    #                                            max_price__isnull=True, ).only('pictures', 'pictures1',
+    #                                                                           'min_price', 'max_price',
+    #                                                                           'min_beds', 'max_beds',
+    #                                                                           'min_baths', 'max_baths',
+    #                                                                           'address', 'baths', 'price',
+    #                                                                           'beds', 'state', 'dogs', 'cats')
+    # print(apartments.values()[:16])
+    # apartments = apartments[:16]
+    # apartments = [random.choice(apartments) for i in range(16)]
+    storage = []
+    apartments = list(apartments)
+    random.shuffle(apartments)
+    for apartment in apartments:
+        if apartment.price > 0:
+            storage.append(apartment)
+        else:
+            if apartment.min_price > 0:
+                storage.append(apartment)
+        if len(storage) == 16: break
     context = {
         'user': request.user if request.user.is_authenticated else None,
-        'apartments': apartments
+        'apartments': storage
     }
-    pprint(context)
 
     return render(request, 'index.html', context)
 
@@ -127,6 +137,12 @@ def profile(request):
 
 
 def search(request):
+    apartments = Apartment.objects.all().only('pictures', 'pictures1',
+                                              'min_price', 'max_price',
+                                              'min_beds', 'max_beds',
+                                              'min_baths', 'max_baths',
+                                              'address', 'baths', 'price',
+                                              'beds', 'state', 'dogs', 'cats')
     if request.method == 'POST':
         baths = request.POST.get('baths')
         location = request.POST.get('location')
@@ -134,41 +150,36 @@ def search(request):
         rooms = request.POST.get('rooms')
         dogs = request.POST.get('dogs')
         cats = request.POST.get('cats')
-        apartments = Apartment.objects.filter().only('pictures', 'pictures1',
-                                                     'min_price', 'max_price',
-                                                     'min_beds', 'max_beds',
-                                                     'min_baths', 'max_baths',
-                                                     'address', 'baths', 'price',
-                                                     'beds', 'state', 'dogs', 'cats')
+
         if baths:
-            apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(max_baths=baths)))
-        if location:
+            apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(baths=baths)))
+        if location != 'State':
             apartments = apartments.filter(state=location)
         if budget:
             apartments = apartments.filter(
-                ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(max_price=budget)))
+                ((Q(min_price__lte=budget) & Q(max_price__gte=budget)) | Q(price=budget)))
         if rooms:
-            apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(max_beds=rooms)))
+            apartments = apartments.filter(((Q(min_beds__lte=rooms) & Q(max_beds__gte=rooms)) | Q(beds=rooms)))
         # if cats:
         #     apartments = apartments.filter(cats=cats)
         #     print(apartments)
         # if dogs:
         #     apartments = apartments.filter(dogs=dogs)
         #     print(apartments)
-        apartments = apartments[:16]
-    else:
-        apartments = Apartment.objects.all().only('pictures', 'pictures1',
-                                                  'min_price', 'max_price',
-                                                  'min_beds', 'max_beds',
-                                                  'min_baths', 'max_baths',
-                                                  'address', 'baths', 'price',
-                                                  'beds', 'state', 'dogs', 'cats')
-        # print(apartments.values()[:16])
         # apartments = apartments[:16]
-        apartments = [random.choice(apartments) for i in range(32)]
+    storage = []
+    apartments = list(apartments)
+    random.shuffle(apartments)
+    for apartment in apartments:
+        if apartment.price > 0:
+            storage.append(apartment)
+        else:
+            if apartment.min_price > 0:
+                storage.append(apartment)
+        if len(storage) == 16: break
     context = {
         'user': request.user if request.user.is_authenticated else None,
-        'apartments': apartments
+        'apartments': storage
     }
 
     return render(request, 'search.html', context)
