@@ -47,11 +47,32 @@
     <!-- Template Main CSS File -->
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+            integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">-->
+    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+            integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" crossorigin="anonymous"></script>
     <style>
         .navbar {
             box-shadow: none !important;
         }
     </style>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+    <!--<script type="text/javascript">
+        $(window).on('load', function () {
+            if ({{ match }} >
+            50
+        )
+            {
+                $('#MatchModal').modal('show');
+            }
+
+        });
+    </script>-->
 
 </head>
 
@@ -63,7 +84,8 @@
 
         <!--<h1 class="logo"><a href="index.html">OnePage</a></h1> -->
         <!-- Uncomment below if you prefer to use an image logo -->
-        <a href="index.html" class="logo"><img src="{% static 'assets/img/logo.png' %}" alt="" class="img-fluid"></a>
+        <a href="{% url 'landing' %}" class="logo"><img src="{% static 'assets/img/logo.png' %}" alt=""
+                                                        class="img-fluid"></a>
         <!--<ul class="navbar justify-content-center">
           <li>
             <a class="nav-link scrollto" href="#">Buy</a>
@@ -79,12 +101,18 @@
                 <
                 <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>
+                    {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
-                    <li><a href=""><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                        alt="avatar"
-                                        class="rounded-circle img-fluid"
-                                        style="max-height:30px; width:auto; vertical-align:middle;">
+                    <li><a href="{% url 'profile' %}"><img
+                            src="
+
+
+
+
+                                    {% if user.profile_picture is not None %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}"
+                            alt="avatar"
+                            class="rounded-circle img-fluid"
+                            style="max-height:30px; width:auto; vertical-align:middle;">
                     </a></li>
                 {% else %}
                     <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
@@ -176,6 +204,33 @@
                             </div>
                         {% endfor %}
                     </div>
+
+                    <div class="section-title pb-3 text-dark">
+                        <h4 class="">Personality Traits</h4>
+                        <ul style="list-style-type:none;">
+                            <li>Garage {% if garage %}
+                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                            <li>Washer {% if washer %}
+                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                            <li>Dryer {% if dryer %}
+                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                            <li>Pets {% if pets %}
+                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                        </ul>
+                    </div>
+                    {% if request.user.mate %}
+                        <p class="text-dark">There's a roommate match for this apartment! click <a href=""
+                                                                                                   data-bs-toggle="modal"
+                                                                                                   data-bs-target="#exampleModalCenter">here</a>
+                            to check it out</p>
+                    {% endif %}
+
+
+                    <!-- Button trigger modal -->
+                    <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModalCenter">
+                        Launch demo modal
+                    </button>-->
                 </div>
                 <div class="col-5">
                     <div class="card" style="background: #212225;">
@@ -315,6 +370,59 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
 ></script>
+<!-- Roommates Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header p-2">
+                <h5 class="modal-title text-dark" id="exampleModalLongTitle">Available Roommates</h5>
+                <button type="button" class="close rounded-3 border-0 bg-white" data-bs-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3 text-dark">
+                {% for dummy in random_profiles %}
+                    <div class="d-flex gap-3">
+                        <img src="{{ dummy | get_item:'img' }}" height="80px" width="80px" class="rounded-circle">
+                        <div>
+                            <div>{{ dummy | get_item:'name' }}</div>
+                            <div>{{ dummy | get_item:'age' }} years</div>
+                            <div>{{ dummy | get_item:'sex' }}</div>
+                        </div>
+                    </div>
+                    <hr class=" m-0 p-0">
+                {% endfor %}
+
+
+            </div>
+            <!--<div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                </button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>-->
+        </div>
+    </div>
+</div>
+
+<!-- Match Modal -->
+<div class="modal fade" id="MatchModal" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content" style="background: transparent; border: none;">
+            <div class="modal-body d-flex flex-column gap-3 align-items-center justify-content-center">
+                <h3>Congrats! you've found a match!</h3>
+                <img class="opacity-100" src="{% static 'assets/img/cheers.png' %}" height="100%" width="100%">
+            </div>
+            <!--<div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                </button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>-->
+        </div>
+    </div>
+</div>
 
 </body>
 

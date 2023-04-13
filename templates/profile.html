@@ -9,78 +9,172 @@
     <main>
         <div class="container">
             <section>
-                <div class="row justify-content-center">
-                    <div class="col-8">
-                        <div class="card mb-4 border-0">
-                            <div class="card-body">
-                                <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
-                                    <div class="pt-2">
-                                        <p class="text-dark">Do you like Pets?</p>
-                                    </div>
-                                    <div class="">
-                                        <select class="form-select border-0 fw-semibold"
-                                                aria-label="Default select example">
-                                            <option selected>No</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                    </div>
+                <form action="{% url 'profile' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column justify-content-center align-items-center mb-3">
+                        <h4 class="text-dark">Personal Information</h4>
+                        <div class="col-lg-6 col-11">
+                            <label for="yourUsername"
+                                   class="form-label text-muted">Username</label>
+                            <div class="input-group has-validation">
+                                <input type="text" name="username"
+                                       class="form-control"
+                                       id="yourUsername" value="{{ user.username }}">
+                                <div class="invalid-feedback" id="username-error">Please enter
+                                    your
+                                    username.
                                 </div>
-                                <hr>
-                                <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
-                                    <div class="pt-2">
-                                        <p class="text-dark">Do you have a car?</p>
-                                    </div>
-                                    <div class="">
-                                        <select class="form-select border-0 fw-semibold"
-                                                aria-label="Default select example">
-                                            <option selected>Yes</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                    </div>
+                            </div>
+                            <label for="yourname"
+                                   class="form-label text-muted">Full Name</label>
+                            <div class="input-group has-validation">
+                                <input type="text" name="name"
+                                       class="form-control"
+                                       id="yourname" required value="{{ user.name }}">
+                                <div class="invalid-feedback" id="username-error">Please enter
+                                    your
+                                    name.
                                 </div>
-                                <hr>
-                                <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
-                                    <div class="pt-2">
-                                        <p class="text-dark">Do you need a Dryer?</p>
-                                    </div>
-                                    <div class="">
-                                        <select class="form-select border-0 fw-semibold"
-                                                aria-label="Default select example">
-                                            <option selected>No</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                    </div>
+                            </div>
+                            <label for="gender" class="form-label text-muted">Gender</label>
+                            <select class="form-select border-0 w-auto fw-semibold" id="gender" name="gender" required>
+                                {% if user.gender == 'M' %}
+                                    <option value="M" selected>Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="X">Others...</option>
+                                {% elif user.gender == 'F' %}
+                                    <option value="M">Male</option>
+                                    <option value="F" selected>Female</option>
+                                    <option value="X">Others...</option>
+                                {% else %}
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="X">Others...</option>
+                                {% endif %}
+                            </select>
+                            <label for="yourage"
+                                   class="form-label text-muted">Age</label>
+                            <div class="input-group has-validation">
+                                <input type="number" name="age"
+                                       class="form-control"
+                                       id="yourage" required value="{{ user.age }}">
+                                <div class="invalid-feedback" id="age-error">Please enter
+                                    your
+                                    age.
                                 </div>
-                                <hr>
-                                <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
-                                    <div class="pt-2">
-                                        <p class="text-dark">Do you need a Washer?</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1" class="form-label text-muted">Profile
+                                    Picture</label>
+                                <input type="file" class="form-control-file" id="exampleFormControlFile1"
+                                       name="profile">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+
+                        <div class="col-lg-6 col-11">
+                            <div class="card mb-4 border-0">
+                                <div class="card-body p-0">
+                                    <h4 class="text-dark card-title text-center">Property Information</h4>
+
+                                    <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
+                                        <div class="pt-2">
+                                            <p class="text-dark">Do you want a a roommate?</p>
+                                        </div>
+                                        <div class="">
+                                            <select class="form-select border-0 fw-semibold"
+                                                    aria-label="Default select example" name="mate">
+                                                {% if user.mate %}
+                                                    <option value="0">No</option>
+                                                    <option selected value="1">Yes</option>
+                                                {% else %}
+                                                    <option selected value="0">No</option>
+                                                    <option value="1">Yes</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="">
-                                        <select class="form-select border-0 fw-semibold"
-                                                aria-label="Default select example">
-                                            <option selected>Yes</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
+                                    <hr>
+                                    <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
+                                        <div class="pt-2">
+                                            <p class="text-dark">Do you like Pets?</p>
+                                        </div>
+                                        <div class="">
+                                            <select class="form-select border-0 fw-semibold"
+                                                    aria-label="Default select example" name="pets">
+                                                {% if user.pets %}
+                                                    <option value="0">No</option>
+                                                    <option selected value="1">Yes</option>
+                                                {% else %}
+                                                    <option selected value="0">No</option>
+                                                    <option value="1">Yes</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
+                                    <hr>
+                                    <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
+                                        <div class="pt-2">
+                                            <p class="text-dark">Do you have a car?</p>
+                                        </div>
+                                        <div class="">
+                                            <select class="form-select border-0 fw-semibold"
+                                                    aria-label="Default select example" name="car">
+                                                {% if user.car %}
+                                                    <option value="0">No</option>
+                                                    <option selected value="1">Yes</option>
+                                                {% else %}
+                                                    <option selected value="0">No</option>
+                                                    <option value="1">Yes</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
+                                        <div class="pt-2">
+                                            <p class="text-dark">Do you need a Dryer?</p>
+                                        </div>
+                                        <div class="">
+                                            <select class="form-select border-0 fw-semibold"
+                                                    aria-label="Default select example" name="dryer">
+                                                {% if user.dryer %}
+                                                    <option value="0">No</option>
+                                                    <option selected value="1">Yes</option>
+                                                {% else %}
+                                                    <option selected value="0">No</option>
+                                                    <option value="1">Yes</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="flex-row border d-flex px-3 align-items-center rounded-2 justify-content-between">
+                                        <div class="pt-2">
+                                            <p class="text-dark">Do you need a Washer?</p>
+                                        </div>
+                                        <div class="">
+                                            <select class="form-select border-0 fw-semibold"
+                                                    aria-label="Default select example" name="washer">
+                                                {% if user.washer %}
+                                                    <option value="0">No</option>
+                                                    <option selected value="1">Yes</option>
+                                                {% else %}
+                                                    <option selected value="0">No</option>
+                                                    <option value="1">Yes</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="d-flex justify-content-center mb-2">
-                                        <button type="button" class="btn btn-outline-dark ms-1 mt-3">Update</button>
+                                        <button class="btn btn-outline-dark ms-1 mt-3">Update</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </section>
         </div>
     </main><!-- End #main -->

@@ -25,3 +25,5 @@ gunicorn
 lxml
 bs4
 selenium
+webdriver-manager
+pillow

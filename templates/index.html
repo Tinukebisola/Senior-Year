@@ -30,6 +30,8 @@
 
     <!-- Template Main CSS File -->
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -47,12 +49,14 @@
                 <!--<li><a class="nav-link scrollto" href="search.html">Buy</a></li>-->
                 <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>
+                    {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
-                    <li><a href=""><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                                        alt="avatar"
-                                        class="rounded-circle img-fluid"
-                                        style="max-height:30px; width:auto; vertical-align:middle;">
+                    <li><a href="{% url 'profile' %}"><img
+                            src="
+                                    {% if user.profile_picture is not None %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}"
+                            alt="avatar"
+                            class="rounded-circle img-fluid"
+                            style="max-height:30px; width:auto; vertical-align:middle;">
                     </a></li>
                 {% else %}
                     <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
@@ -159,7 +163,7 @@
                                        id="rooms" placeholder="No. of Rooms">
                                 <label for="rooms" class="text-black">Rooms</label>
                             </div>
-                            <div class="form-floating">
+                            <!--<div class="form-floating">
                                 <select class="form-select border-0 w-auto mx-2 fw-semibold" id="dogs" name="dogs">
 
                                     <option value="1">Yes</option>
@@ -174,7 +178,7 @@
                                     <option value="0">No</option>
                                 </select>
                                 <label for="rooms" class="text-black">cats</label>
-                            </div>
+                            </div>-->
                             <div class="vr text-dark mt-3 mb-3"></div>
                             <div class="form-floating mx-4">
                                 <input type="number" class="form-control border-bottom noscroll" id="budget"
@@ -197,9 +201,11 @@
                             <div class="member-img">
                                 <img src="{{ apartment.pictures }}" height="360px"
                                      class="rounded" style="max-width: 100%;" alt="">
-                                <div class="social">
+                                <div class="social d-flex justify-content-between">
                                     <a href="{% url 'property' permalink=apartment.permalink %}"><span
                                             class="">view</span></a>
+                                    <!-- Use an element to toggle between a like/dislike icon -->
+                                    <i onclick="myFunction(this)" class="fa fa-thumbs-up"></i>
                                 </div>
                             </div>
                             <div class="member-info pt-2">

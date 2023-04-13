@@ -51,6 +51,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         THEY = 'THEY', 'They'
 
     email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    gender = models.CharField(max_length=100, null=True, blank=True)
+    age = models.IntegerField(null=True)
+    profile_picture = models.ImageField(upload_to='profile/', null=True, blank=True)
 
     # living_style = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
     # necessity = models.CharField(max_length=60, choices=LivingTypes.choices, blank=True, null=True)
@@ -61,6 +66,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # required fields
     date_joined = models.DateTimeField(auto_now_add=True)
+    mate = models.BooleanField(default=True)
+    pets = models.BooleanField(default=True)
+    car = models.BooleanField(default=False)
+    dryer = models.BooleanField(default=False)
+    washer = models.BooleanField(default=False)
 
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

@@ -18,6 +18,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import json
 import os
+import os
+import random
+from django.templatetags.static import static
+from django.conf import settings
 
 
 def landing(request):
@@ -33,8 +37,8 @@ def landing(request):
         location = request.POST.get('location')
         budget = request.POST.get('budget')
         rooms = request.POST.get('rooms')
-        dogs = request.POST.get('dogs')
-        cats = request.POST.get('cats')
+        # dogs = request.POST.get('dogs')
+        # cats = request.POST.get('cats')
 
         if baths:
             apartments = apartments.filter(((Q(min_baths__lte=baths) & Q(max_baths__gte=baths)) | Q(baths=baths)))
@@ -103,7 +107,6 @@ def register(request):
 
 
 def loginview(request):
-    print(request.user.is_authenticated)
     if request.user.is_authenticated:
         return redirect('landing')
 
@@ -128,6 +131,20 @@ def loginview(request):
 def profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
+    if request.method == 'POST':
+        print(request.FILES.get('profile'), request.POST)
+        if request.FILES.get('profile') is not None:
+            request.user.profile_picture = request.FILES.get('profile')
+        request.user.username = request.POST.get('username')
+        request.user.name = request.POST.get('name')
+        request.user.gender = request.POST.get('gender')
+        request.user.age = request.POST.get('age')
+        request.user.pets = request.POST.get('pets')
+        request.user.mate = request.POST.get('mate')
+        request.user.car = request.POST.get('car')
+        request.user.washer = request.POST.get('washer')
+        request.user.dryer = request.POST.get('dryer')
+        request.user.save()
 
     context = {
         'user': request.user if request.user.is_authenticated else None
@@ -209,18 +226,18 @@ def property(request, permalink):
     # print(permalink)
     apartment = Apartment.objects.filter(permalink=permalink).first()
     url = f'https://www.realtor.com/realestateandhomes-detail/{permalink}'
-    # print(get_page_content(url, 5000))
+    storage = {}
 
-    # options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),
-                              chrome_options=chrome_options)
+    chrome_options.add_argument('--headless')
+    if settings.APP:
+        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+        driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),
+                                  chrome_options=chrome_options)
+    else:
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     driver.get(url)
     try:
@@ -229,25 +246,99 @@ def property(request, permalink):
     except TimeoutException:
         print(f'Timeout reached after 5000 seconds.')
     content = driver.page_source
+    driver.quit()
     soup = BeautifulSoup(content, 'html.parser')
-    storage = {}
+    counter = 0
+    mate = {
+        'pets': False,
+        'garage': False,
+        'dryer': False,
+        'washer': False,
+        'roommate': False
+    }
     scripts = soup.find_all('script')
     for script_tag in scripts:
         if 'id' in script_tag.attrs and script_tag.attrs['id'] == '__NEXT_DATA__':
             page = json.loads(script_tag.text)
             for feature in page['props']['pageProps']['property']['details']:
                 # storage[feature['category']] = feature['text']
+                for feat in feature['text']:
+                    if request.user.pets:
+                        if (
+                                'dog' in feat.lower() or 'cat' in feat.lower()) and 'allowed' in feat.lower() and not 'not' in feat.lower() and not \
+                                mate['pets']:
+                            mate['pets'] = True
+                            counter += 1
+                    else:
+                        counter += 1
+                    if request.user.washer:
+                        if 'washer' in feat.lower() and not mate['washer']:
+                            mate['washer'] = True
+                            counter += 1
+                    else:
+                        counter += 1
+                    if request.user.dryer:
+                        if 'dryer' in feat.lower() and not mate['dryer']:
+                            mate['dryer'] = True
+                            counter += 1
+                    else:
+                        counter += 1
+                    if request.user.car:
+                        if 'garage' in feat.lower() and not mate['garage']:
+                            mate['garage'] = True
+                            counter += 1
+                    else:
+                        counter += 1
+
                 num = len(feature['text']) // 2
                 storage[feature['category']] = []
                 storage[feature['category']].append(feature['text'][:num + 1])
                 storage[feature['category']].append(feature['text'][num + 1:])
-            pprint(storage)
+            # pprint(storage)
+            # print(counter)
             # print(content)
             break
-    driver.quit()
+
     context = {}
     context['apartment'] = apartment
     context['storage'] = storage
-    print(context)
+    random_profiles = [
+        {
+            'name': 'Jennifer Johnson',
+            'age': 27,
+            'sex': 'Female',
+            'img': static('assets/img/profile/girl.jpg')
+        },
+        {
+            'name': 'Natalie Robinson',
+            'age': 25,
+            'sex': 'Female',
+            'img': static('assets/img/profile/girl1.jpg')
+        },
+        {
+            'name': 'John Ferguson',
+            'age': 18,
+            'sex': 'Male',
+            'img': static('assets/img/profile/guy1.jpg')
+        },
+        {
+            'name': 'Samuel Patterson',
+            'age': 19,
+            'sex': 'Male',
+            'img': static('assets/img/profile/guy.jpg')
+        },
+        {
+            'name': 'Jasmine James',
+            'age': 22,
+            'sex': 'Female',
+            'img': static('assets/img/profile/girl2.jpg')
+        }]
+    random.shuffle(random_profiles)
+    # context['match'] = (counter / 4) * 100
+    # context['preference'] = mate
+    context.update(mate)
+    # context['match'] = 100
+    context['random_profiles'] = random_profiles[:3]
+    # print(context)
     # context.update(storage)
     return render(request, 'property.html', context)
