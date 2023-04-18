@@ -75,8 +75,8 @@
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href="{% url 'profile' %}"><img
-                            src="
-                                    {% if user.profile_picture is not None %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}"
+                            src=
+                                    {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}
                             alt="avatar"
                             class="rounded-circle img-fluid"
                             style="max-height:30px; width:auto; vertical-align:middle;">
@@ -184,6 +184,21 @@
             newContainer.classList.add("active")
 
         });
+    }
+
+
+    // Get the ID value from the URL's fragment identifier
+    var targetId = window.location.hash.substring(1);
+    if (targetId === 'signup') {
+        targetId = 'ex3-tab-2'
+    }
+
+    // Get a reference to the element with the specified ID
+    var targetElement = document.getElementById(targetId);
+
+    // If the element exists, set the focus on it
+    if (targetElement) {
+        targetElement.click();
     }
 
 

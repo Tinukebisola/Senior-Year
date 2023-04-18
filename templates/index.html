@@ -52,8 +52,8 @@
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href="{% url 'profile' %}"><img
-                            src="
-                                    {% if user.profile_picture is not None %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}"
+                            src=
+                                    {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}
                             alt="avatar"
                             class="rounded-circle img-fluid"
                             style="max-height:30px; width:auto; vertical-align:middle;">
@@ -201,11 +201,11 @@
                             <div class="member-img">
                                 <img src="{{ apartment.pictures }}" height="360px"
                                      class="rounded" style="max-width: 100%;" alt="">
-                                <div class="social d-flex justify-content-between">
+                                <div class="social">
                                     <a href="{% url 'property' permalink=apartment.permalink %}"><span
-                                            class="">view</span></a>
+                                            class=""><i class="bi bi-info-circle"></i></span></a>
                                     <!-- Use an element to toggle between a like/dislike icon -->
-                                    <i onclick="myFunction(this)" class="fa fa-thumbs-up"></i>
+                                    <!--<i onclick="myFunction(this)" class="fa fa-thumbs-up"></i>-->
                                 </div>
                             </div>
                             <div class="member-info pt-2">

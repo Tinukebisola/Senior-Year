@@ -104,12 +104,8 @@
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href="{% url 'profile' %}"><img
-                            src="
-
-
-
-
-                                    {% if user.profile_picture is not None %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}"
+                            src=
+                                    {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"{% endif %}
                             alt="avatar"
                             class="rounded-circle img-fluid"
                             style="max-height:30px; width:auto; vertical-align:middle;">
@@ -207,18 +203,24 @@
 
                     <div class="section-title pb-3 text-dark">
                         <h4 class="">Personality Traits</h4>
-                        <ul style="list-style-type:none;">
-                            <li>Garage {% if garage %}
-                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
-                            <li>Washer {% if washer %}
-                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
-                            <li>Dryer {% if dryer %}
-                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
-                            <li>Pets {% if pets %}
-                                <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
-                        </ul>
+                        {% if request.user.is_authenticated %}
+                            <ul style="list-style-type:none;">
+                                <li>Garage {% if garage %}
+                                    <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                                <li>Washer {% if washer %}
+                                    <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                                <li>Dryer {% if dryer %}
+                                    <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                                <li>Pets {% if pets %}
+                                    <i class="fa fa-check" aria-hidden="true" style="color: green"></i>{% endif %}</li>
+                            </ul>
+                        {% else %}
+                            <p><a href="{% url 'login' %}" class="text-decoration-none">Login or Create</a>
+                                a new
+                                account to check if this property is a good match!</p>
+                        {% endif %}
                     </div>
-                    {% if request.user.mate %}
+                    {% if request.user.is_authenticated and request.user.mate %}
                         <p class="text-dark">There's a roommate match for this apartment! click <a href=""
                                                                                                    data-bs-toggle="modal"
                                                                                                    data-bs-target="#exampleModalCenter">here</a>

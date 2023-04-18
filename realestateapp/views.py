@@ -227,28 +227,7 @@ def property(request, permalink):
     apartment = Apartment.objects.filter(permalink=permalink).first()
     url = f'https://www.realtor.com/realestateandhomes-detail/{permalink}'
     storage = {}
-
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')
-    if settings.APP:
-        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--no-sandbox")
-        driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),
-                                  chrome_options=chrome_options)
-    else:
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-
-    driver.get(url)
-    try:
-        element_present = EC.presence_of_element_located((By.TAG_NAME, 'body'))
-        WebDriverWait(driver, 5000).until(element_present)
-    except TimeoutException:
-        print(f'Timeout reached after 5000 seconds.')
-    content = driver.page_source
-    driver.quit()
-    soup = BeautifulSoup(content, 'html.parser')
-    counter = 0
+    scrape = False
     mate = {
         'pets': False,
         'garage': False,
@@ -256,48 +235,72 @@ def property(request, permalink):
         'washer': False,
         'roommate': False
     }
-    scripts = soup.find_all('script')
-    for script_tag in scripts:
-        if 'id' in script_tag.attrs and script_tag.attrs['id'] == '__NEXT_DATA__':
-            page = json.loads(script_tag.text)
-            for feature in page['props']['pageProps']['property']['details']:
-                # storage[feature['category']] = feature['text']
-                for feat in feature['text']:
-                    if request.user.pets:
-                        if (
-                                'dog' in feat.lower() or 'cat' in feat.lower()) and 'allowed' in feat.lower() and not 'not' in feat.lower() and not \
-                                mate['pets']:
-                            mate['pets'] = True
-                            counter += 1
-                    else:
-                        counter += 1
-                    if request.user.washer:
-                        if 'washer' in feat.lower() and not mate['washer']:
-                            mate['washer'] = True
-                            counter += 1
-                    else:
-                        counter += 1
-                    if request.user.dryer:
-                        if 'dryer' in feat.lower() and not mate['dryer']:
-                            mate['dryer'] = True
-                            counter += 1
-                    else:
-                        counter += 1
-                    if request.user.car:
-                        if 'garage' in feat.lower() and not mate['garage']:
-                            mate['garage'] = True
-                            counter += 1
-                    else:
-                        counter += 1
+    if scrape:
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        if settings.APP:
+            chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--no-sandbox")
+            driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),
+                                      chrome_options=chrome_options)
+        else:
+            driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
-                num = len(feature['text']) // 2
-                storage[feature['category']] = []
-                storage[feature['category']].append(feature['text'][:num + 1])
-                storage[feature['category']].append(feature['text'][num + 1:])
-            # pprint(storage)
-            # print(counter)
-            # print(content)
-            break
+        driver.get(url)
+        try:
+            element_present = EC.presence_of_element_located((By.TAG_NAME, 'body'))
+            WebDriverWait(driver, 5000).until(element_present)
+        except TimeoutException:
+            print(f'Timeout reached after 5000 seconds.')
+        content = driver.page_source
+        driver.quit()
+        soup = BeautifulSoup(content, 'html.parser')
+        counter = 0
+
+        scripts = soup.find_all('script')
+        for script_tag in scripts:
+            if 'id' in script_tag.attrs and script_tag.attrs['id'] == '__NEXT_DATA__':
+                page = json.loads(script_tag.text)
+                for feature in page['props']['pageProps']['property']['details']:
+                    # storage[feature['category']] = feature['text']
+                    if request.user.is_authenticated:
+                        for feat in feature['text']:
+                            if request.user.pets:
+                                if (
+                                        'dog' in feat.lower() or 'cat' in feat.lower()) and 'allowed' in feat.lower() and not 'not' in feat.lower() and not \
+                                        mate['pets']:
+                                    mate['pets'] = True
+                                    counter += 1
+                            else:
+                                counter += 1
+                            if request.user.washer:
+                                if 'washer' in feat.lower() and not mate['washer']:
+                                    mate['washer'] = True
+                                    counter += 1
+                            else:
+                                counter += 1
+                            if request.user.dryer:
+                                if 'dryer' in feat.lower() and not mate['dryer']:
+                                    mate['dryer'] = True
+                                    counter += 1
+                            else:
+                                counter += 1
+                            if request.user.car:
+                                if 'garage' in feat.lower() and not mate['garage']:
+                                    mate['garage'] = True
+                                    counter += 1
+                            else:
+                                counter += 1
+
+                    num = len(feature['text']) // 2
+                    storage[feature['category']] = []
+                    storage[feature['category']].append(feature['text'][:num + 1])
+                    storage[feature['category']].append(feature['text'][num + 1:])
+                # pprint(storage)
+                # print(counter)
+                # print(content)
+                break
 
     context = {}
     context['apartment'] = apartment
