@@ -51,12 +51,16 @@
                 {% if request.user.is_authenticated %}
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
-                    <li><a href="{% url 'profile' %}"><img
-                            src=
-                                    {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}
-                            alt="avatar"
-                            class="rounded-circle img-fluid"
-                            style="max-height:30px; width:auto; vertical-align:middle;">
+                    <li><a href="{% url 'profile' %}" class="gap-2">
+                        {% if user.name %}
+                            <div class="fw-bolder">{{ user.name }}</div>
+                        {% endif %}
+                        <img
+                                src=
+                                        {% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'{% endif %}
+                                alt="avatar"
+                                class="rounded-circle img-fluid"
+                                style="max-height:30px; width:auto; vertical-align:middle;">
                     </a></li>
                 {% else %}
                     <li><a class="nav-link scrollto" href="{% url 'login' %}">Log in</a></li>
@@ -75,7 +79,7 @@
 
         <div class="row">
             <div class="col-lg-6 pt-3 pt-lg-0 content" data-aos="fade-left" data-aos-delay="100">
-                <h1>BUY. &. RENT.</h1>
+                <h1>BUY. & RENT.</h1>
 
                 <p>Your next home is here. Finding your dream home
                     can be quite difficult, but we can help you

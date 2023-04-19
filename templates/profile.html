@@ -19,7 +19,8 @@
                             <div class="input-group has-validation">
                                 <input type="text" name="username"
                                        class="form-control"
-                                       id="yourUsername" value="{{ user.username }}">
+                                       id="yourUsername"
+                                       value={% if user.username %}{{ user.username }}{% else %}''{% endif %}>
                                 <div class="invalid-feedback" id="username-error">Please enter
                                     your
                                     username.
@@ -30,7 +31,8 @@
                             <div class="input-group has-validation">
                                 <input type="text" name="name"
                                        class="form-control"
-                                       id="yourname" required value="{{ user.name }}">
+                                       id="yourname" required
+                                       value={% if user.name %}{{ user.name }}{% else %}''{% endif %}>
                                 <div class="invalid-feedback" id="username-error">Please enter
                                     your
                                     name.
@@ -57,7 +59,8 @@
                             <div class="input-group has-validation">
                                 <input type="number" name="age"
                                        class="form-control"
-                                       id="yourage" required value="{{ user.age }}">
+                                       id="yourage" required
+                                       value={% if user.age %}{{ user.age }}{% else %}''{% endif %}>
                                 <div class="invalid-feedback" id="age-error">Please enter
                                     your
                                     age.

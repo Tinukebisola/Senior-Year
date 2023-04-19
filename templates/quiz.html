@@ -1,0 +1,268 @@
+{% extends 'header_footer.html' %}
+{% load static %}
+{% block auth_title %}
+    Profile Page
+{% endblock %}
+
+{% block custom %}
+
+    <main>
+        <div class="container">
+            <section class="pt-2">
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'profile' %}">
+                        <button class="btn btn-outline-dark d-flex align-items-center gap-2">Skip <i
+                                class="fa-solid fa-greater-than fa-xl"></i>
+                        </button>
+                    </a>
+                </div>
+                <form hx-post="{% url 'quiz' %}" hx-target="#result"
+                      hx-swap="outerHTML">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column justify-content-center align-items-center mb-3">
+                        <h4 class="text-dark">Personality Quiz</h4>
+
+                        <div class="col-lg-8 text-dark">
+                            <p>
+                            <h1 style="float: left" class="m-0 p-0 fw-bolder mx-2">H</h1>aving trouble narrowing
+                            down your
+                            apartment
+                            options? Is more
+                            than one apartment speaking
+                            to you as in, I’m the one! Or is your lease ending soon and the thought of finding
+                            another apartment scaring you?
+                            </p>
+                            <p>Or do you just love quizzes? Then take this one to find out what your apartment
+                                personality is.</p>
+                            <ol>
+                                <li>
+                                    <div>If I had to choose, this is the one thing I could NOT live without:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="1"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Balcony/terrace
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="1"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Amenities like a gym/pool
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="1"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Hotspot location
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="1"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Extra space
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>What’s most important in the following list:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="2"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Easy access to outside for pets or fresh air
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="2"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Parking with garage
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="2"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Close to public transit
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="2"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Close to parks
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>My style can best be defined as:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="3"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Earth tones, relaxed, and tranquil
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="3"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            A Pottery Barn or Crate & Barrel catalog
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="3"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Mod-chic
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="3"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Simplistic and comfortable
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>As far as neighbors are concerned, I:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="4"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Have my friends so I don’t really care
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="4"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Nice to have neighbors but we don’t need to be besties
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="4"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            I like having a hip community around
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="4"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            The less neighbors, the better! I like it quiet!
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>When the toilet overflows, I:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="5"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Better find out who runs this place…
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="5"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Will call my landlord who is on speed dial
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="5"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Will call the concierge—what the heck do I do?
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="5"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Might just fix it myself
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>As far as security is concerned:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="6"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Open to the street is fine by me
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="6"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            I’d rather be in a larger building with security
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="6"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            24-hour concierge and doorman, please!
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="6"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Um…I’ll just lock the door.
+                                        </label>
+                                    </div>
+                                <li>
+                                    <div>When friends visit my place, I want them to think:</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="7"
+                                               id="flexRadioDefault1" value="A">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Awesome view!
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="7"
+                                               id="flexRadioDefault2" value="B">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            What a cool apartment complex!
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="7"
+                                               id="flexRadioDefault1" value="C">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Location, location, location, you win!
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="7"
+                                               id="flexRadioDefault2" value="D">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            It’s so relaxing here
+                                        </label>
+                                    </div>
+                                </li>
+                            </ol>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-outline-dark">Take Test!</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+                <div id="result"></div>
+
+            </section>
+        </div>
+    </main><!-- End #main -->
+
+{% endblock %}

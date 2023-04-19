@@ -99,7 +99,7 @@ def register(request):
             user = authenticate(request, email=email, password=password1)
             if user is not None:
                 login(request, user)
-                return redirect('profile')
+                return redirect('quiz')
         else:
             messages.error(request, f"Passwords do not match")
             return redirect('register')
@@ -145,6 +145,7 @@ def profile(request):
         request.user.washer = request.POST.get('washer')
         request.user.dryer = request.POST.get('dryer')
         request.user.save()
+        return redirect('landing')
 
     context = {
         'user': request.user if request.user.is_authenticated else None
@@ -227,7 +228,7 @@ def property(request, permalink):
     apartment = Apartment.objects.filter(permalink=permalink).first()
     url = f'https://www.realtor.com/realestateandhomes-detail/{permalink}'
     storage = {}
-    scrape = False
+    scrape = True
     mate = {
         'pets': False,
         'garage': False,
@@ -345,3 +346,49 @@ def property(request, permalink):
     # print(context)
     # context.update(storage)
     return render(request, 'property.html', context)
+
+
+def quiz(request):
+    if request.method == 'POST':
+        print(request.POST)
+        result = {}
+        for key, value in request.POST.items():
+            if key != 'csrfmiddlewaretoken':
+                result[value] = result.get(value, 0) + 1
+        print(result)
+        highest = None
+        for key, value in result.items():
+            if highest is None:
+                highest = [key, value]
+            else:
+                if value > highest[1]:
+                    highest = [key, value]
+        print(highest)
+        output = {
+            'narration': None,
+            'verdict': None
+        }
+        if highest[0] == 'A':
+            output[
+                'narration'] = "You’re a free spirit and don’t like to be confined into a space without easy access out! You need an apartment that has a nice open balcony or terrace and one that won’t have you on 50 floors by elevator before you’re outside. You like a nice view from your windows, whether of the city or forest. Your style tends to err on the chill side rather than following every trend to come from the interior design realm. You’re best off getting a place with a little extra square footage than one with cool amenities as you’re active and social and will make do with the great outdoors outside."
+            output[
+                'verdict'] = "Get off the beaten path in order to score a great balcony or terrace. Consider a walk-up or a complex in a suburb/outskirt neighborhood."
+        elif highest[0] == 'B':
+            output[
+                'narration'] = 'You’re a Type A who likes upgraded everything! You should look at apartments with nice gyms or a pool, upgraded appliances, and on-site management. To get this, you should settle for an up-and-coming neighborhood or at least off the beaten path. You’re not going to get everything you want in the center of it all, but you’ll be happier as long as you can wash and dry your clothes in nice new appliances and in your own space, so it’s worth it!'
+            output[
+                'verdict'] = 'Check out up-and-coming neighborhoods where properties have upgraded everything in order to pull tenants in.'
+        elif highest[0] == 'C':
+            output[
+                'narration'] = 'You like action, nightlife, and checking out what’s hot and new on the scene. You enjoy entertaining and tend to decorate with a flair for interior design. If it looks like it could be on a magazine cover, then it’s most likely your apartment! You want to be in the center of it though, so you’re going to have to kiss goodbye that extra space and settle for something tight –maybe even consider a studio. But hey, when you live in the hottest zip code in town, who cares?'
+            output[
+                'verdict'] = 'Look at high rises in your favorite neighborhood but be OK with less space and consider a studio.'
+        elif highest[0] == 'D':
+            output[
+                'narration'] = 'The words high and rise might make your skin crawl. You tend to be an outdoorsy type who likes to take advantage of parks and recreation. Your apartment should complement this lifestyle by being close to outdoor spaces, so that you don’t feel stuffed in. Opt for apartments on the edge of town, so you get more space and faster access to the local lake or forest preserve. You can choose a smaller apartment building or separated unit living as you don’t rely on your landlord and you certainly don’t want to hear high heels pounding on the wood floor above you.'
+            output[
+                'verdict'] = 'Get as far out as you can without isolating yourself. Find an apartment with off-site management and plenty of access to parks. Maybe you can tend the garden for a discount!'
+        print(output)
+        return render(request, 'quiz-result.html', context=output)
+    context = {}
+    return render(request, 'quiz.html', context)
