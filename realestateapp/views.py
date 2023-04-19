@@ -396,11 +396,13 @@ def quiz(request):
 
 def favourites(request):
     apartments = request.user.favourites.all()
-    context = {'apartments': [apartment.apartment for apartment in apartments]}
+    if apartments.exists():
+        context = {'apartments': [apartment.apartment for apartment in apartments]}
+    else:
+        context = {'apartments': []}
     return render(request, 'favourites.html', context=context)
 
 
 def savefavourite(request, id):
-    print(id)
     FavouriteApartment.objects.create(user=request.user, apartment_id=id)
     return render(request, 'save.html', )

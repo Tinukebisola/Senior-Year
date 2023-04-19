@@ -101,6 +101,7 @@
                 <
                 <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
                 {% if request.user.is_authenticated %}
+                    <li><a class="nav-link scrollto" href="{% url 'favourites' %}">Favourites</a></li>
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href="{% url 'profile' %}"><img
