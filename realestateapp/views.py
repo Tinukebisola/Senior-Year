@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from .models import User, Apartment
+from .models import User, Apartment, FavouriteApartment
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 import random
@@ -392,3 +392,15 @@ def quiz(request):
         return render(request, 'quiz-result.html', context=output)
     context = {}
     return render(request, 'quiz.html', context)
+
+
+def favourites(request):
+    apartments = request.user.favourites.all()
+    context = {'apartments': [apartment.apartment for apartment in apartments]}
+    return render(request, 'favourites.html', context=context)
+
+
+def savefavourite(request, id):
+    print(id)
+    FavouriteApartment.objects.create(user=request.user, apartment_id=id)
+    return render(request, 'save.html', )

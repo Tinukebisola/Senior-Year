@@ -123,3 +123,11 @@ class Apartment(models.Model):
 
     def __str__(self):
         return f'{self.id} - {self.address}'
+
+
+class FavouriteApartment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favourites')
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} - {self.apartment}'

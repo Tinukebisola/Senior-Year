@@ -25,5 +25,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('search/', views.search, name='search'),
     path('apartments/<str:permalink>/', views.property, name='property'),
-    path('sign-up/quiz/', views.quiz, name='quiz')
+    path('sign-up/quiz/', views.quiz, name='quiz'),
+    path('apartments/favourites', views.favourites, name='favourites'),
+    path('apartments/favourites/<int:id>/', views.savefavourite, name='save_favourites')
 ]

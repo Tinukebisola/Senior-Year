@@ -27,6 +27,8 @@
     <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
     <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
 
     <!-- Template Main CSS File -->
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
@@ -48,7 +50,9 @@
             <ul>
                 <!--<li><a class="nav-link scrollto" href="search.html">Buy</a></li>-->
                 <li><a class="nav-link scrollto" href="{% url 'search' %}">Rent</a></li>
+
                 {% if request.user.is_authenticated %}
+                    <li><a class="nav-link scrollto" href="{% url 'favourites' %}">Favourites</a></li>
                     {#                    <li><a class=" nav-item nav-link scrollto" href="{% url 'profile' %}">Profile</a></li>#}
                     <li><a class="getstarted scrollto rounded-pill" href="{% url 'logout' %}">Log out</a></li>
                     <li><a href="{% url 'profile' %}" class="gap-2">
@@ -205,11 +209,14 @@
                             <div class="member-img">
                                 <img src="{{ apartment.pictures }}" height="360px"
                                      class="rounded" style="max-width: 100%;" alt="">
-                                <div class="social">
+                                <div class="social d-flex justify-content-between px-2 py-2">
                                     <a href="{% url 'property' permalink=apartment.permalink %}"><span
                                             class=""><i class="bi bi-info-circle"></i></span></a>
-                                    <!-- Use an element to toggle between a like/dislike icon -->
-                                    <!--<i onclick="myFunction(this)" class="fa fa-thumbs-up"></i>-->
+                                    {% if request.user.is_authenticated %}
+                                        <a href="javascript:;" hx-get="{% url 'save_favourites' id=apartment.id %}"
+                                           hx-trigger="click"><span
+                                                class=""><i class="bi bi-heart" id="result"></i></span></a>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="member-info pt-2">
